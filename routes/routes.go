@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gofiber/fiber/v2"
 	"mohit.com/ecom-api/controllers"
+	"mohit.com/ecom-api/middleware"
 )
 
 func SetupRoutes(app *fiber.App) {
@@ -13,14 +14,14 @@ func SetupRoutes(app *fiber.App) {
 	// auth.Post("/forgot-password", controllers.ForgotPassword)
 	// auth.Post("/reset-password", controllers.ResetPassword)
 	// auth.Get("/logout", middleware.IsAuthenticated, controllers.Logout)
-	// auth.Get("/me", middleware.IsAuthenticated, controllers.Me)
+	auth.Get("/me", middleware.IsAuthenticated, Controllers.Me)
 
-	// // Product Routes
-	// products := app.Group("/api/products")
-	// products.Get("/", controllers.GetProducts)
-	// products.Post("/", middleware.IsAdmin, controllers.CreateProduct)
-	// products.Get("/:id", controllers.GetProductByID)
-	// products.Put("/:id", middleware.IsAdmin, controllers.UpdateProduct)
+	// Product Routes
+	products := app.Group("/api/products")
+	products.Get("/", Controllers.GetAllproducts)
+	products.Post("/", middleware.IsAdmin, Controllers.Createproducts)
+	products.Get("/:id", Controllers.GetProductByID)
+	products.Put("/:id", middleware.IsAdmin, controllers.UpdateProduct)
 	// products.Delete("/:id", middleware.IsAdmin, controllers.DeleteProduct)
 
 	// // Category Routes

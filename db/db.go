@@ -14,6 +14,7 @@ import (
 var (
 	client         *mongo.Client
 	userCollection *mongo.Collection
+	productCollection *mongo.Collection
 )
 
 func init() {
@@ -44,11 +45,16 @@ func init() {
 
 	// Initialize the userCollection
 	userCollection = client.Database("E-Commerce").Collection("user")
+	productCollection = client.Database("E-Commerce").Collection("products")
 }
 
 // GetUserCollection returns the user collection
 func GetUserCollection() *mongo.Collection {
 	return userCollection
+}
+
+func GetProductCollection() *mongo.Collection{
+	return productCollection
 }
 
 // CloseConnection closes the MongoDB connection

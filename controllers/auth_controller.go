@@ -147,3 +147,11 @@ func GenerateJWT(user models.User) (string, error){
 	token :=jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
+
+func Me(c *fiber.Ctx) error{
+	user := c.Locals("user")
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"user": user,
+	})
+}
