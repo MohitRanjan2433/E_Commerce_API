@@ -1,117 +1,131 @@
 package Controllers
 
 import (
-	"context"
-	"time"
-
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"mohit.com/ecom-api/db"
 	"mohit.com/ecom-api/models"
 )
 
-func GetAllproducts(c *fiber.Ctx) error {
-	productCollection :=  db.GetProductCollection()
 
-	//set a context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func GetAllProducts(c *fiber.Ctx) error {
+	products, err := models.GetAllProducts()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not retrieve products"})
+	}
+	return c.Status(fiber.StatusOK).JSON(products)
+}
 
-	cursor, err := productCollection.Find(ctx, bson.M{}, options.Find())
-	if err != nil{
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Could not retieve product",
+
+func CreateProduct(c *fiber.Ctx) error {
+
+	var request struct {
+		Name        string             `json:"name"`
+		Description string             `json:"description"`
+		Price       float64            `json:"price"`
+		Rating      float64            `json:"rating"`
+		CategoryID  primitive.ObjectID `json:"category_id"`
+		BrandID     primitive.ObjectID `json:"brand_id"`
+		Stock       int                `json:"stock"`
+	}
+
+	// Parse the body of the request into the struct
+	if err := c.BodyParser(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Could not parse the request body",
 		})
 	}
 
-	defer cursor.Close(ctx)
-
-	var product[] models.Product
-	if err := cursor.All(ctx, &product); err != nil{
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error passing product",
+	// Validate the incoming product data
+	if request.Name == "" || request.Price <= 0 || request.Stock < 0 || request.CategoryID.IsZero() || request.BrandID.IsZero() {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid product data",
 		})
+	}
+
+	// Check if product already exists by name and brand
+	exists, err := models.CheckIfProductExists(request.Name, request.BrandID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to check if the product exists",
+		})
+	}
+
+	if exists {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"error": "Product with the same name and brand already exists",
+		})
+	}
+
+	// Call the model function to create the product
+	err = models.CreateProduct(request.Name, request.Description, request.Price, request.Rating, request.CategoryID, request.BrandID, request.Stock)
+	if err != nil {
+		// Handle the conflict error or any other error
+		if _, ok := err.(*models.ProductConflictError); ok {
+			return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not create the product",
+		})
+	}
+
+	// Return success response
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": "Product created successfully",
+		"product": request,
+	})
+}
+
+
+
+func GetProductByPID(c *fiber.Ctx) error {
+	pid := c.Params("pid")
+	if pid == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "PID is required"})
+	}
+
+	product, err := models.GetProductByPID(pid)
+	if err != nil {
+		if _, ok := err.(*models.ProductNotFoundError); ok {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not retrieve product"})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(product)
 }
-func Createproducts(c *fiber.Ctx) error {
-    productCollection := db.GetProductCollection()
 
-    // Parse the request body
-    var product models.Product
-    if err := c.BodyParser(&product); err != nil {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "error": "Could not parse the request body",
-        })
-    }
+// UpdateProductByPID handles the HTTP request for updating a product by PID
+func UpdateProductByPID(c *fiber.Ctx) error {
+	pid := c.Params("pid")
+	var updatedProduct models.Product
+	if err := c.BodyParser(&updatedProduct); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Could not parse the request body"})
+	}
 
-    // Validate product data
-    if product.Name == "" || product.Price < 0 || product.PID == "" {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "error": "Invalid product data",
-        })
-    }
+	err := models.UpdateProductByPID(pid, updatedProduct)
+	if err != nil {
+		if _, ok := err.(*models.ProductNotFoundError); ok {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not update product"})
+	}
 
-    // Check if a product with the same PID already exists
-    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-    defer cancel()
-    filter := bson.M{"pid": product.PID}
-    var existingProduct models.Product
-    err := productCollection.FindOne(ctx, filter).Decode(&existingProduct)
-
-    if err == nil {
-        // Product with the same PID already exists
-        return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-            "error": "Product with the same PID already exists",
-        })
-    } else if err.Error() != "mongo: no documents in result" {
-        // Return error if it's something other than "no documents found"
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-            "error": "Could not check for existing product",
-        })
-    }
-
-    // Initialize other product details
-    product.CreatedAt = time.Now()
-
-    // Insert new product into the database
-    _, err = productCollection.InsertOne(ctx, product)
-    if err != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-            "error": "Could not create product",
-        })
-    }
-
-    return c.Status(fiber.StatusOK).JSON(fiber.Map{
-        "message": "Product created successfully",
-        "product": product,
-    })
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Product updated successfully"})
 }
 
-func GetProductByID(c *fiber.Ctx) error {
-	// Get product ID from URL parameters
-	productID := c.Params("id")
-
-	objectID, err := primitive.ObjectIDFromHex(productID)
-	if err != nil{
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":"Invalid product ID format",
-		})
+// DeleteProductByPID handles the HTTP request for deleting a product by PID
+func DeleteProductByPID(c *fiber.Ctx) error {
+	pid := c.Params("pid")
+	err := models.DeleteProductByPID(pid)
+	if err != nil {
+		if _, ok := err.(*models.ProductNotFoundError); ok {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not delete product"})
 	}
 
-	productCollection := db.GetProductCollection()
-	
-	filter := bson.M{"_id": objectID}
-	var existProduct models.Product
-	err = productCollection.FindOne(context.TODO(), filter).Decode(&existProduct)
-	if err != nil{
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "Product not found",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(existProduct)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Product deleted successfully"})
 }

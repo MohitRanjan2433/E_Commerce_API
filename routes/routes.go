@@ -11,31 +11,29 @@ func SetupRoutes(app *fiber.App) {
 	auth := app.Group("/api/auth")
 	auth.Post("/signup", Controllers.Signup)
 	auth.Post("/login", Controllers.Login)
-	// auth.Post("/forgot-password", controllers.ForgotPassword)
-	// auth.Post("/reset-password", controllers.ResetPassword)
-	// auth.Get("/logout", middleware.IsAuthenticated, controllers.Logout)
 	auth.Get("/me", middleware.IsAuthenticated, Controllers.Me)
 
 	// Product Routes
 	products := app.Group("/api/products")
-	products.Get("/", Controllers.GetAllproducts)
-	products.Post("/", middleware.IsAdmin, Controllers.Createproducts)
-	products.Get("/:id", Controllers.GetProductByID)
-	products.Put("/:id", middleware.IsAdmin, controllers.UpdateProduct)
-	// products.Delete("/:id", middleware.IsAdmin, controllers.DeleteProduct)
+	products.Get("/", Controllers.GetAllProducts)
+	products.Post("/", middleware.IsAdmin, Controllers.CreateProduct)
+	products.Get("/:pid", Controllers.GetProductByPID)
+	// products.Put("/:id", middleware.IsAdmin, Controllers.UpdateProduct)
+	products.Delete("/:pid", middleware.IsAdmin, Controllers.DeleteProductByPID)
 
 	// // Category Routes
-	// categories := app.Group("/api/categories")
-	// categories.Get("/", controllers.GetCategories)
-	// categories.Post("/", middleware.IsAdmin, controllers.CreateCategory)
+	categories := app.Group("/api/categories")
+
+	categories.Get("/", Controllers.GetAllCategory)
+	categories.Post("/",  Controllers.CreateCategory)
 	// categories.Get("/:id", controllers.GetCategoryByID)
 	// categories.Put("/:id", middleware.IsAdmin, controllers.UpdateCategory)
 	// categories.Delete("/:id", middleware.IsAdmin, controllers.DeleteCategory)
 
 	// // Brand Routes
-	// brands := app.Group("/api/brands")
+	brands := app.Group("/api/brands")
 	// brands.Get("/", controllers.GetBrands)
-	// brands.Post("/", middleware.IsAdmin, controllers.CreateBrand)
+	brands.Post("/",  Controllers.CreateBrand)
 	// brands.Get("/:id", controllers.GetBrandByID)
 	// brands.Put("/:id", middleware.IsAdmin, controllers.UpdateBrand)
 	// brands.Delete("/:id", middleware.IsAdmin, controllers.DeleteBrand)

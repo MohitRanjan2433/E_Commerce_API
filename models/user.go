@@ -14,8 +14,8 @@ type User struct {
 	ID        string `json:"id" bson:"_id"`
 	Email     string `json:"email" bson:"email"`
 	Password  string `json:"password" bson:"password"`
-	FirstName string `json:"first_name" bson:"first_name"`
-	LastName  string `json:"last_name" bson:"last_name"`
+	FirstName string `json:"firstname" bson:"firstname"`
+	LastName  string `json:"lastname" bson:"lastname"`
 	Role      string `json:"role" bson:"role"` // User role
 }
 
