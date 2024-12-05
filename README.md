@@ -4,7 +4,13 @@ Welcome to the E-commerce API Project! This repository contains the backend for 
 
 ## Features ✨
 
-- **User Authentication & Authorization**: Sign-up, login, password recovery, JWT-based authentication.
+### 1.User Authentication
+-- Sign up  
+-- Login  
+-- Get logged-in user details  
+
+
+
 - **Product Management**: CRUD operations for products, categories, and brands.
 - **Shopping Cart**: Add, remove, and update cart items.
 - **Order Management**: Place orders, view order history, update order status, and payment integration.
