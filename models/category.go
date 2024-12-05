@@ -82,3 +82,45 @@ func GetAllCategory() ([]Category, error){
 
 	return category, nil
 }
+
+func GetCategoryByID(categoryID string) (*Category, error) {
+	categoryCollection := db.GetCategoryCollection()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	objectID, err := primitive.ObjectIDFromHex(categoryID)
+	filter := bson.M{"category_id": objectID}
+
+	var category Category
+	err = categoryCollection.FindOne(ctx, filter).Decode(&category)
+	if err == mongo.ErrNoDocuments{
+		return nil, nil
+	}
+
+	return &category, err
+
+}
+
+func UpdateCategory(categoryID , newName string) error {
+	categoryCollection := db.GetCategoryCollection()
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
+	defer cancel()
+
+	ObjectID, err := primitive.ObjectIDFromHex(categoryID)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"category_id": ObjectID}
+	update := bson.M{
+		"$set":bson.M{
+			"name": newName,
+			"updated_at": time.Now(),
+		},
+	}
+
+	_, err = categoryCollection.UpdateOne(ctx, filter, update)
+	return err
+}

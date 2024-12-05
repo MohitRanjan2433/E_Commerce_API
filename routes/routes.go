@@ -26,8 +26,8 @@ func SetupRoutes(app *fiber.App) {
 
 	categories.Get("/", Controllers.GetAllCategory)
 	categories.Post("/",  Controllers.CreateCategory)
-	// categories.Get("/:id", controllers.GetCategoryByID)
-	// categories.Put("/:id", middleware.IsAdmin, controllers.UpdateCategory)
+	categories.Get("/:id", Controllers.GetCategoryByID)
+	categories.Put("/:id",  Controllers.UpdateCategory)
 	// categories.Delete("/:id", middleware.IsAdmin, controllers.DeleteCategory)
 
 	// // Brand Routes
