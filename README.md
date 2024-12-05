@@ -9,31 +9,55 @@ Welcome to the E-commerce API Project! This repository contains the backend for 
 -- Login  
 -- Get logged-in user details  
 
+### 2.Product Management
+-- Fetch all products  
+-- Create new products (Admin only)  
+-- Fetch a product by ID  
+-- Delete a product (Admin only)  
+
+### 3.Category Management
+-- Fetch all categories   
+-- Create new categories  
+-- Fetch category by ID  
+-- Update categories  
+
+### 4.Cart Management
+-- Add items to the cart  
+-- Update cart items  
+-- Remove items from the cart  
+
+### 5.Order Management:
+-- Place orders  
+-- Track orders   
+-- Manage order statuses   
+
+### 6.Inventory Management:
+-- Update inventory   
+-- Set low-stock alerts   
+### 7.Shipping Management
+-- Add, update, and delete shipping addresses    
+-- Track shipments   
+
+# Tech Stack 🛠️
+Backend Framework: Gin (Go)    
+Authentication: Middleware-based for roles like Admin and Authenticated Users.    
+Database: To be integrated (e.g., PostgreSQL, MySQL, or MongoDB).     
+Middleware:     
+<sup>IsAuthenticated: Ensures the user is logged in.</sup>
+<sup>IsAdmin: Restricts access to admin-only routes.</sup>
 
 
-- **Product Management**: CRUD operations for products, categories, and brands.
-- **Shopping Cart**: Add, remove, and update cart items.
-- **Order Management**: Place orders, view order history, update order status, and payment integration.
-- **Inventory Management**: Track stock levels, product variations (size, color), and low-stock alerts.
-- **Search & Filters**: Full-text search, filters based on categories, price, and ratings.
-- **Payment Integration**: Integration with services like Stripe or PayPal for processing payments.
-- **Shipping & Delivery**: Address management, shipping methods, tracking numbers, and status.
-- **Admin Dashboard**: Admin roles with permissions, report generation (sales, products, users).
+# API Endpoints 📃
+## Authentication
 
-## Technologies Used
+| Method | EndPoint | Description |
+-----------------------------------
+| POST | /api/auth/signup | Register a new User
 
-- **Go**: Go programming language for the backend API.
-- **Fiber**: High-performance web framework for Go.
-- **JWT (JSON Web Tokens)**: For user authentication and token management.
-- **MongoDB / PostgreSQL**: For data storage.
-- **Stripe / PayPal**: For payment integration.
-- **GORM / MongoDB Go Driver**: ORM for interacting with the database (depending on the database you choose).
 
-## Installation
+# Future API Endpoints (Planned)    
 
-### 1. Clone the Repository
-Clone this repository to your local machine.
-
-```bash
-git clone https://github.com/yourusername/e-commerce-api.git
-cd e-commerce-api
+## Cart: /api/cart/
+## Orders: /api/orders/
+## Inventory: /api/inventory/
+## Shipping: /api/shipping/
