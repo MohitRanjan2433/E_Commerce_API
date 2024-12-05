@@ -41,7 +41,7 @@ Welcome to the E-commerce API Project! This repository contains the backend for 
 # Tech Stack 🛠️
 Backend Framework: Gin (Go)    
 Authentication: Middleware-based for roles like Admin and Authenticated Users.    
-Database: To be integrated (e.g., PostgreSQL, MySQL, or MongoDB).     
+Database: To be integrated (MongoDB).     
 Middleware:     
 <sup>IsAuthenticated: Ensures the user is logged in.</sup>
 <sup>IsAdmin: Restricts access to admin-only routes.</sup>
