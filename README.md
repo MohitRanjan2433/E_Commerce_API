@@ -1,6 +1,8 @@
-This is a backend API for an e-commerce platform built using **Go Fiber**. The API allows users to perform various operations related to products, categories, orders, shopping cart, user management, payment integration, and more.
+*E-commerce API Project 🚀*
 
-## Features
+Welcome to the E-commerce API Project! This repository contains the backend for an e-commerce platform. The API is built using a structured and modular approach, featuring user authentication, product management, category management, and more.
+
+**Features ✨**
 
 - **User Authentication & Authorization**: Sign-up, login, password recovery, JWT-based authentication.
 - **Product Management**: CRUD operations for products, categories, and brands.
