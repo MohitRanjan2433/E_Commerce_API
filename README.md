@@ -1,4 +1,4 @@
-**E-commerce API Project 🚀**
+**E-commerce API Project 🚀
 
 Welcome to the E-commerce API Project! This repository contains the backend for an e-commerce platform. The API is built using a structured and modular approach, featuring user authentication, product management, category management, and more.
 
