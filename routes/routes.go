@@ -11,26 +11,25 @@ func SetupRoutes(app *fiber.App) {
 	auth := app.Group("/api/auth")
 	auth.Post("/signup", Controllers.Signup)
 	auth.Post("/login", Controllers.Login)
-	auth.Get("/me", middleware.IsAuthenticated, Controllers.Me)
+	auth.Get("/me", middleware.Authorize("user"),  Controllers.Me)
 
 	// Product Routes
 	products := app.Group("/api/products")
 	products.Get("/", Controllers.GetAllProducts)
-	products.Post("/", middleware.IsAdmin, Controllers.CreateProduct)
-	products.Get("/:pid", Controllers.GetProductByPID)
-	// products.Put("/:id", middleware.IsAdmin, Controllers.UpdateProduct)
-	products.Delete("/:pid", middleware.IsAdmin, Controllers.DeleteProductByPID)
+	products.Post("/", middleware.Authorize("admin"), Controllers.CreateProduct)
+	products.Get("/:id", Controllers.GetProductByID)
+	products.Put("/:id", middleware.Authorize("admin"), Controllers.UpdateProductByID)
+	products.Delete("/:id", middleware.Authorize("admin"), Controllers.DeleteProductByID)
 
-	// // Category Routes
+	//Category Routes
 	categories := app.Group("/api/categories")
-
 	categories.Get("/", Controllers.GetAllCategory)
 	categories.Post("/",  Controllers.CreateCategory)
 	categories.Get("/:id", Controllers.GetCategoryByID)
 	categories.Put("/:id",  Controllers.UpdateCategory)
-	// categories.Delete("/:id", middleware.IsAdmin, controllers.DeleteCategory)
+	categories.Delete("/:id", Controllers.DeleteCategoryByID)
 
-	// // Brand Routes
+	//Brand Routes
 	brands := app.Group("/api/brands")
 	// brands.Get("/", controllers.GetBrands)
 	brands.Post("/",  Controllers.CreateBrand)
@@ -38,12 +37,12 @@ func SetupRoutes(app *fiber.App) {
 	// brands.Put("/:id", middleware.IsAdmin, controllers.UpdateBrand)
 	// brands.Delete("/:id", middleware.IsAdmin, controllers.DeleteBrand)
 
-	// // Cart Routes
-	// cart := app.Group("/api/cart")
-	// cart.Get("/", middleware.IsAuthenticated, controllers.GetCart)
-	// cart.Post("/", middleware.IsAuthenticated, controllers.AddToCart)
-	// cart.Put("/:itemId", middleware.IsAuthenticated, controllers.UpdateCartItem)
-	// cart.Delete("/:itemId", middleware.IsAuthenticated, controllers.RemoveFromCart)
+	//Cart Routes
+	cart := app.Group("/api/cart")
+	cart.Get("/", middleware.Authorize("user"), Controllers.GetCart)
+	cart.Post("/", middleware.Authorize("user"),  Controllers.AddItemToCart)
+	cart.Delete("/", middleware.Authorize("user"),  Controllers.ClearCart)
+	cart.Delete("/item/:product_id", middleware.Authorize("user"), Controllers.RemoveItemFromCart)
 
 	// // Order Routes
 	// orders := app.Group("/api/orders")

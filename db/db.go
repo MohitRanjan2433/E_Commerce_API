@@ -17,6 +17,7 @@ var (
 	productCollection *mongo.Collection
 	categoryCollection *mongo.Collection
 	brandCollection *mongo.Collection
+	cartCollection  *mongo.Collection
 )
 
 func init() {
@@ -50,6 +51,7 @@ func init() {
 	productCollection = client.Database("E-Commerce").Collection("products")
 	categoryCollection = client.Database("E-Commerce").Collection("category")
 	brandCollection = client.Database("E-Commerce").Collection("brand")
+	cartCollection = client.Database("E-Commerce").Collection("cart")
 }
 
 // GetUserCollection returns the user collection
@@ -67,6 +69,10 @@ func GetCategoryCollection() *mongo.Collection{
 
 func GetBrandCollection() *mongo.Collection{
 	return brandCollection
+}
+
+func GetCartCollection() *mongo.Collection{
+	return cartCollection
 }
 
 // CloseConnection closes the MongoDB connection

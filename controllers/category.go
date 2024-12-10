@@ -122,3 +122,20 @@ func UpdateCategory(c *fiber.Ctx) error {
         "data": request.Name,
     })
 }
+
+func DeleteCategoryByID(c *fiber.Ctx) error {
+	id := c.Params("id") 
+	if id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Category ID is required"})
+	}
+
+	err := models.DeleteCategoryByID(id)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Category not found"})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not delete category"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Category deleted successfully"})
+}

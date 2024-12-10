@@ -6,7 +6,7 @@ import (
 	"mohit.com/ecom-api/models"
 )
 
-
+// GetAllProducts retrieves all products
 func GetAllProducts(c *fiber.Ctx) error {
 	products, err := models.GetAllProducts()
 	if err != nil {
@@ -15,9 +15,8 @@ func GetAllProducts(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(products)
 }
 
-
+// CreateProduct creates a new product
 func CreateProduct(c *fiber.Ctx) error {
-
 	var request struct {
 		Name        string             `json:"name"`
 		Description string             `json:"description"`
@@ -59,13 +58,6 @@ func CreateProduct(c *fiber.Ctx) error {
 	// Call the model function to create the product
 	err = models.CreateProduct(request.Name, request.Description, request.Price, request.Rating, request.CategoryID, request.BrandID, request.Stock)
 	if err != nil {
-		// Handle the conflict error or any other error
-		if _, ok := err.(*models.ProductConflictError); ok {
-			return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
-
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Could not create the product",
 		})
@@ -78,53 +70,66 @@ func CreateProduct(c *fiber.Ctx) error {
 	})
 }
 
-
-
-func GetProductByPID(c *fiber.Ctx) error {
-	pid := c.Params("pid")
-	if pid == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "PID is required"})
+// GetProductByID retrieves a product by its ID
+func GetProductByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID is required"})
 	}
 
-	product, err := models.GetProductByPID(pid)
+	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		if _, ok := err.(*models.ProductNotFoundError); ok {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
-		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not retrieve product"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID format"})
+	}
+
+	product, err := models.GetProductByID(objectID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(product)
 }
 
-// UpdateProductByPID handles the HTTP request for updating a product by PID
-func UpdateProductByPID(c *fiber.Ctx) error {
-	pid := c.Params("pid")
+// UpdateProductByID updates a product by its ID
+func UpdateProductByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID is required"})
+	}
+
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID format"})
+	}
+
 	var updatedProduct models.Product
 	if err := c.BodyParser(&updatedProduct); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Could not parse the request body"})
 	}
 
-	err := models.UpdateProductByPID(pid, updatedProduct)
+	err = models.UpdateProductByID(objectID, updatedProduct)
 	if err != nil {
-		if _, ok := err.(*models.ProductNotFoundError); ok {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
-		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not update product"})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Product updated successfully"})
 }
 
-// DeleteProductByPID handles the HTTP request for deleting a product by PID
-func DeleteProductByPID(c *fiber.Ctx) error {
-	pid := c.Params("pid")
-	err := models.DeleteProductByPID(pid)
+// DeleteProductByID deletes a product by its ID
+func DeleteProductByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID is required"})
+	}
+
+	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		if _, ok := err.(*models.ProductNotFoundError); ok {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
-		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not delete product"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID format"})
+	}
+
+	err = models.DeleteProductByID(objectID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Product deleted successfully"})

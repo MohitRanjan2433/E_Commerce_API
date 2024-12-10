@@ -124,3 +124,32 @@ func UpdateCategory(categoryID , newName string) error {
 	_, err = categoryCollection.UpdateOne(ctx, filter, update)
 	return err
 }
+
+func DeleteCategoryByID(categoryID string) error {
+	categoryCollection := db.GetCategoryCollection()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Convert the categoryID to an ObjectID
+	objectID, err := primitive.ObjectIDFromHex(categoryID)
+	if err != nil {
+		return err 
+	}
+
+	// Define the filter to find the category
+	filter := bson.M{"category_id": objectID}
+
+	// Perform the delete operation
+	result, err := categoryCollection.DeleteOne(ctx, filter)
+	if err != nil {
+		return err 
+	}
+
+	// Check if any document was deleted
+	if result.DeletedCount == 0 {
+		return mongo.ErrNoDocuments 
+	}
+
+	return nil
+}
