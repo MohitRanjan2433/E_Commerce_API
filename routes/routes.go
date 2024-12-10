@@ -31,11 +31,11 @@ func SetupRoutes(app *fiber.App) {
 
 	//Brand Routes
 	brands := app.Group("/api/brands")
-	// brands.Get("/", controllers.GetBrands)
-	brands.Post("/",  Controllers.CreateBrand)
-	// brands.Get("/:id", controllers.GetBrandByID)
-	// brands.Put("/:id", middleware.IsAdmin, controllers.UpdateBrand)
-	// brands.Delete("/:id", middleware.IsAdmin, controllers.DeleteBrand)
+	brands.Get("/:id", Controllers.GetBrandController)
+	brands.Post("/",  Controllers.CreateBrandController)
+	brands.Get("/", Controllers.GetAllBrandController)
+	brands.Put("/:id", Controllers.UpdateBrandController)
+	brands.Delete("/:id", Controllers.DeleteBrandController)
 
 	//Cart Routes
 	cart := app.Group("/api/cart")
@@ -44,12 +44,12 @@ func SetupRoutes(app *fiber.App) {
 	cart.Delete("/", middleware.Authorize("user"),  Controllers.ClearCart)
 	cart.Delete("/item/:product_id", middleware.Authorize("user"), Controllers.RemoveItemFromCart)
 
-	// // Order Routes
-	// orders := app.Group("/api/orders")
-	// orders.Get("/", middleware.IsAuthenticated, controllers.GetOrders)
-	// orders.Post("/", middleware.IsAuthenticated, controllers.CreateOrder)
+	//Order Routes
+	orders := app.Group("/api/orders")
+	orders.Get("/", middleware.Authorize("user"), Controllers.GetAllOrdersController)
+	orders.Post("/", middleware.Authorize("user"), Controllers.CreateOrderHandler)
 	// orders.Get("/:id", middleware.IsAuthenticated, controllers.GetOrderByID)
-	// orders.Put("/:id", middleware.IsAdmin, controllers.UpdateOrderStatus)
+	orders.Put("/status", Controllers.UpdateOrderStatusController)
 	// orders.Delete("/:id", middleware.IsAdmin, controllers.DeleteOrder)
 	// orders.Get("/:id/payment-status", middleware.IsAuthenticated, controllers.GetPaymentStatus)
 

@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"mohit.com/ecom-api/db"
 )
 
@@ -58,4 +59,78 @@ func CreateBrand(brandName ,Country string) (primitive.ObjectID, error){
 	}
 
 	return primitive.NewObjectID(), nil
+}
+
+func GetBrandByID(brandID primitive.ObjectID) (*Brand , error){
+
+	brandCollection := db.GetBrandCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"brand_id": brandID}
+	var brand Brand
+	err := brandCollection.FindOne(ctx, filter).Decode(&brand)
+	if err == mongo.ErrNoDocuments{
+		return nil, nil
+	}else if err != nil{
+		return nil, err
+	}
+
+	return &brand, nil
+
+}
+
+func DeleteBrand(brandID primitive.ObjectID) error {
+	brandCollection := db.GetBrandCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"brand_id": brandID}
+	_, err := brandCollection.DeleteOne(ctx, filter)
+	if err != nil{
+		return err
+	}
+
+	return nil
+
+}
+
+func UpdateBrand(brandID primitive.ObjectID, name ,country string) error {
+	brandCollection := db.GetBrandCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"brand_id": brandID}
+	update := bson.M{
+		"$set": bson.M{
+			"name": name,
+			"country": country,
+			"updated_at": time.Now(),
+		},
+	}
+
+	_, err := brandCollection.UpdateOne(ctx, filter, update)
+	if err != nil{
+		return err
+	}
+	return nil
+}
+
+func GetAllBrand() ([]Brand, error){
+	brandCollection := db.GetBrandCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cursor, err := brandCollection.Find(ctx, bson.M{}, options.Find()); if err != nil{
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	var brand []Brand
+
+	if err := cursor.All(ctx, &brand); err != nil{
+		return nil, err
+	}
+
+	return brand, nil
 }
