@@ -54,10 +54,10 @@ func SetupRoutes(app *fiber.App) {
 	// orders.Get("/:id/payment-status", middleware.IsAuthenticated, controllers.GetPaymentStatus)
 
 	// // Inventory Routes
-	// inventory := app.Group("/api/inventory")
-	// inventory.Get("/", middleware.IsAdmin, controllers.GetInventory)
-	// inventory.Get("/:productId", middleware.IsAdmin, controllers.GetProductInventory)
-	// inventory.Post("/", middleware.IsAdmin, controllers.UpdateInventory)
+	inventory := app.Group("/api/inventory")
+	inventory.Post("/", middleware.Authorize("admin"), Controllers.CreateInventoryController)
+	inventory.Get("/", middleware.Authorize("admin"), Controllers.GetAllInventoryCollection)
+	inventory.Post("/updateStock", middleware.Authorize("admin"), Controllers.UpdateStockController)
 	// inventory.Post("/alerts", middleware.IsAdmin, controllers.SetLowStockAlert)
 
 	// // Search Routes
