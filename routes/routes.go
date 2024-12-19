@@ -51,53 +51,11 @@ func SetupRoutes(app *fiber.App) {
 	// orders.Get("/:id", middleware.IsAuthenticated, controllers.GetOrderByID)
 	orders.Put("/status", Controllers.UpdateOrderStatusController)
 	// orders.Delete("/:id", middleware.IsAdmin, controllers.DeleteOrder)
-	// orders.Get("/:id/payment-status", middleware.IsAuthenticated, controllers.GetPaymentStatus)
 
-	// // Inventory Routes
+	//Inventory Routes
 	inventory := app.Group("/api/inventory")
-	inventory.Post("/", middleware.Authorize("admin"), Controllers.CreateInventoryController)
-	inventory.Get("/", middleware.Authorize("admin"), Controllers.GetAllInventoryCollection)
-	inventory.Post("/updateStock", middleware.Authorize("admin"), Controllers.UpdateStockController)
-	// inventory.Post("/alerts", middleware.IsAdmin, controllers.SetLowStockAlert)
-
-	// // Search Routes
-	// search := app.Group("/api/search")
-	// search.Get("/products", controllers.SearchProducts)
-	// search.Get("/categories", controllers.SearchCategories)
-	// search.Get("/brands", controllers.SearchBrands)
-
-	// // Payment Routes
-	// payment := app.Group("/api/payment")
-	// payment.Post("/stripe/create-checkout-session", controllers.CreateStripeCheckoutSession)
-	// payment.Post("/paypal/create-order", controllers.CreatePaypalOrder)
-	// payment.Post("/stripe/webhook", controllers.StripeWebhook)
-	// payment.Post("/paypal/webhook", controllers.PaypalWebhook)
-
-	// // Shipping Routes
-	// shipping := app.Group("/api/shipping")
-	// shipping.Post("/address", middleware.IsAuthenticated, controllers.AddShippingAddress)
-	// shipping.Get("/addresses", middleware.IsAuthenticated, controllers.GetShippingAddresses)
-	// shipping.Put("/address/:id", middleware.IsAuthenticated, controllers.UpdateShippingAddress)
-	// shipping.Delete("/address/:id", middleware.IsAuthenticated, controllers.DeleteShippingAddress)
-	// shipping.Get("/methods", controllers.GetShippingMethods)
-	// shipping.Get("/status/:orderId", controllers.GetShippingStatus)
-	// shipping.Post("/track", controllers.TrackShipment)
-
-	// // Admin Routes
-	// admin := app.Group("/api/admin")
-	// admin.Get("/dashboard", middleware.IsAdmin, controllers.GetDashboardOverview)
-	// admin.Get("/reports/sales", middleware.IsAdmin, controllers.GetSalesReport)
-	// admin.Get("/reports/users", middleware.IsAdmin, controllers.GetUserReport)
-	// admin.Get("/reports/products", middleware.IsAdmin, controllers.GetProductReport)
-	// admin.Get("/users", middleware.IsAdmin, controllers.GetUsers)
-	// admin.Put("/users/:id", middleware.IsAdmin, controllers.UpdateUser)
-	// admin.Delete("/users/:id", middleware.IsAdmin, controllers.DeleteUser)
-	// admin.Get("/orders", middleware.IsAdmin, controllers.GetAllOrders)
-	// admin.Get("/orders/:id", middleware.IsAdmin, controllers.GetOrderDetails)
-	// admin.Put("/orders/:id/status", middleware.IsAdmin, controllers.UpdateOrderStatus)
-	// admin.Post("/roles", middleware.IsAdmin, controllers.CreateRole)
-	// admin.Get("/roles", middleware.IsAdmin, controllers.GetRoles)
-	// admin.Put("/roles/:id", middleware.IsAdmin, controllers.UpdateRole)
-	// admin.Delete("/roles/:id", middleware.IsAdmin, controllers.DeleteRole)
+	inventory.Post("/",  Controllers.CreateInventoryController)
+	inventory.Get("/",  Controllers.GetAllInventoryController)
+	inventory.Post("/updateStock",  Controllers.UpdateStockController)
 }
 

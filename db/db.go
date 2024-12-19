@@ -23,18 +23,16 @@ var (
 )
 
 func init() {
-	// Load environment variables from .env file
+
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	// Get MongoDB URL from environment variables
 	connectionString := os.Getenv("MONGODB_URL")
 	if connectionString == "" {
 		log.Fatal("MongoDB URL not set in .env file")
 	}
 
-	// Set client options and connect to MongoDB
 	clientOptions := options.Client().ApplyURI(connectionString)
 	var err error
 	client, err = mongo.Connect(context.TODO(), clientOptions)
@@ -42,7 +40,6 @@ func init() {
 		log.Fatalf("Error connecting to MongoDB: %v", err)
 	}
 
-	// Ping the MongoDB server to verify connection
 	if err = client.Ping(context.TODO(), nil); err != nil {
 		log.Fatalf("Error pinging MongoDB: %v", err)
 	}
@@ -58,7 +55,6 @@ func init() {
 	inventoryCollection = client.Database("E-Commerce").Collection("inventory")
 }
 
-// GetUserCollection returns the user collection
 func GetUserCollection() *mongo.Collection {
 	return userCollection
 }

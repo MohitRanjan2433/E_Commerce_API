@@ -1,119 +1,115 @@
 package Controllers
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"mohit.com/ecom-api/models"
 )
 
+// Helper function to parse ObjectID from string
+func parseObjectID(idStr string) (primitive.ObjectID, error) {
+	return primitive.ObjectIDFromHex(idStr)
+}
 
-
+// CreateInventoryController handles the creation of inventory records
 func CreateInventoryController(c *fiber.Ctx) error {
-	var request struct{
-		ProductID    string    `json:"product_id"`
-		Stock        int       `json:"stock"`
-		Warehouse    string    `json:"warehouse"`
+	var request struct {
+		ProductID string `json:"product_id"`
+		Stock     int    `json:"stock"`
+		Warehouse string `json:"warehouse"`
 	}
 
-	if err := c.BodyParser(&request); err != nil{
+	// Parse request body
+	if err := c.BodyParser(&request); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"errors":"Error in parsing inventory body request",
+			"error": "Error parsing inventory request body",
 		})
 	}
 
-	// Ensure userID exists in the context
-	userID, ok := c.Locals("userID").(string)
-	if !ok || userID == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "UserID is missing in the context. Please authenticate.",
+	// Validate product ID
+	productID, err := parseObjectID(request.ProductID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid product ID",
 		})
 	}
 
-	err := models.CreateInventory(userID, request.ProductID,request.Warehouse, request.Stock)
-	if err != nil{
+	// Create inventory
+	err = models.CreateInventory(productID, request.Warehouse, request.Stock)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"errors":"Error in calling invent model",
+			"error": "Error creating inventory: " + err.Error(),
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":"Succesfully inventory created",
+		"message": "Inventory created successfully",
 	})
-
 }
 
-func GetAllInventoryCollection(c *fiber.Ctx) error {
-	
-	// Ensure userID exists in the context
-	userID, ok := c.Locals("userID").(string)
-	if !ok || userID == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "UserID is missing in the context. Please authenticate.",
-		})
-	}
-
-	inventory, err := models.GetAllInventory(userID)
-	if err != nil{
+// GetAllInventoryController retrieves all inventory records
+func GetAllInventoryController(c *fiber.Ctx) error {
+	// Fetch inventory records
+	inventories, err := models.GetAllInventory()
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to retrieve orders" + err.Error(),
+			"error": "Failed to retrieve inventory: " + err.Error(),
 		})
 	}
 
-	if inventory == nil{
+	if len(inventories) == 0 {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "No data found in inventory",
+			"error": "No inventory records found",
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"data": inventory,
+		"data": inventories,
 	})
 }
 
+// UpdateStockController updates the stock of a specific product
 func UpdateStockController(c *fiber.Ctx) error {
-	var request struct{
-		ID         primitive.ObjectID   `json:"_id"`
-		ProductID  string  `json:"product_id"`
-		Stock     int     `json:"stock"`
+	var request struct {
+		ProductID string `json:"product_id"`
+		Stock     int    `json:"stock"`
 	}
 
+	// Parse request body
+	if err := c.BodyParser(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Error parsing request body",
+		})
+	}
+
+	// Validate stock
 	if request.Stock < 1 {
-		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{
-			"error": "Stock cannot be 0 or less",
-		})
-	}
-
-	// Ensure userID exists in the context
-	userID, ok := c.Locals("userID").(string)
-	if !ok || userID == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "UserID is missing in the context. Please authenticate.",
-		})
-	}
-
-	if err := c.BodyParser(&request); err != nil{
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Error parsing the body req",
+			"error": "Stock must be greater than zero",
 		})
 	}
 
-	if request.Stock == 0{
+	// Validate product ID
+	productID, err := parseObjectID(request.ProductID)
+	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Stock in body is empty",
+			"error": "Invalid product ID",
 		})
 	}
 
-	err := models.UpdateStock(userID, request.ProductID, request.ID, request.Stock)
-	if err != nil{
+	// Update stock
+	err = models.UpdateStock(productID, request.Stock)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to update order status" + err.Error(),
+			"error": "Failed to update stock: " + err.Error(),
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Stock updated successfully",
-		"data": request.Stock,
+		"data":    request.Stock,
 	})
-
 }
 

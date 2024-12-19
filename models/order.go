@@ -7,6 +7,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"mohit.com/ecom-api/db"
 )
@@ -43,6 +44,8 @@ type CreateOrderRequest struct {
 
 func CreateOrder(userID string, items []OrderItem, totalPrice float64, shippingInfo ShippingInfo) (*Order, error) {
 	orderCollection := db.GetOrderCollection()
+	productCollection := db.GetProductCollection()
+	inventoryCollection := db.GetInventoryCollection()
 
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
@@ -55,6 +58,55 @@ func CreateOrder(userID string, items []OrderItem, totalPrice float64, shippingI
 		Shipping:   shippingInfo,
 		PlacedAt:   time.Now(),
 		UpdatedAt:  time.Now(),
+	}
+
+
+
+	for _, items := range items{
+		productID := items.ProductID
+
+		var productRecord Product
+		err := productCollection.FindOne(ctx, bson.M{"_id": productID}).Decode(&productRecord)
+		if err != nil{
+			if err == mongo.ErrNoDocuments{
+				return nil, errors.New("product not found")
+			}
+			return nil, errors.New("failed to check product in productDB" + err.Error())
+		}
+
+		productFilter := bson.M{"_id": productID}
+		productUpdate := bson.M{
+			"$inc": bson.M{
+				"stock": -items.Quantity,
+			},
+			"$set": bson.M{
+				"updated_at": time.Now(),
+			},
+		}
+
+		_, err = productCollection.UpdateOne(ctx, productFilter, productUpdate)
+		if err != nil{
+			return nil, errors.New("Failed to updated product stock" + err.Error())
+		}
+	}
+
+	for _, items := range items{
+		productID := items.ProductID
+
+		productFilter := bson.M{"product_id": productID}
+		productUpdate := bson.M{
+			"$inc": bson.M{
+				"stock": -items.Quantity,
+			},
+			"$set": bson.M{
+				"updated_at": time.Now(),
+			},
+		}
+
+		_, err := inventoryCollection.UpdateOne(ctx, productFilter, productUpdate)
+		if err != nil{
+			return nil, errors.New("Failed to updated inventory stock" + err.Error())
+		}
 	}
 
 	_, err := orderCollection.InsertOne(ctx, newOrder)

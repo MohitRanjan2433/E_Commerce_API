@@ -80,7 +80,7 @@ func CreateProduct(name, description string, price, rating float64, categoryID, 
 		Rating:      rating,
 		CategoryID:  categoryID,
 		BrandID:     brandID,
-		Stock:       stock,
+		Stock:       0,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
