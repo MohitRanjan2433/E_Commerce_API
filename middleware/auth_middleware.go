@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
@@ -91,15 +90,3 @@ func Authorize(requiredRoles ...string) fiber.Handler {
 	}
 }
 
-
-
-func GenerateJWT(user models.User) (string, error){
-	claims := jwt.MapClaims{
-		"email": user.Email,
-		"role": user.Role,
-		"exp" : time.Now().Add(time.Hour * 72).Unix(),
-	}
-
-	token :=jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-}

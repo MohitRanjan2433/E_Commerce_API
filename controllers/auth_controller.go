@@ -3,15 +3,14 @@ package Controllers
 import (
 	"context"
 	"math/rand"
-	"os"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"mohit.com/ecom-api/db"
+	"mohit.com/ecom-api/middleware"
 	"mohit.com/ecom-api/models"
 )
 
@@ -125,7 +124,7 @@ func Login(c *fiber.Ctx) error{
 		})
 	}
 
-	token, err := GenerateJWT(user)
+	token, err := middleware.GenerateJWT(user)
 	if err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error generating token",
@@ -137,16 +136,16 @@ func Login(c *fiber.Ctx) error{
 	})
 }
 
-func GenerateJWT(user models.User) (string, error){
-	claims := jwt.MapClaims{
-		"email": user.Email,
-		"role": user.Role,
-		"exp" : time.Now().Add(time.Hour * 72).Unix(),
-	}
+// func GenerateJWT(user models.User) (string, error){
+// 	claims := jwt.MapClaims{
+// 		"email": user.Email,
+// 		"role": user.Role,
+// 		"exp" : time.Now().Add(time.Hour * 72).Unix(),
+// 	}
 
-	token :=jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-}
+// 	token :=jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+// }
 
 func Me(c *fiber.Ctx) error{
 	user := c.Locals("user")
