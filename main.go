@@ -6,26 +6,22 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"mohit.com/ecom-api/routes" // Import your routes package
+	"mohit.com/ecom-api/routes" 
 )
 
 func main() {
-	// Initialize Fiber app
 	app := fiber.New()
 
-	// Load environment variables from .env file
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	// Get PORT from environment variables or use default
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000" // default port
+		port = "3000" 
 	}
 
-	// Set up routes (make sure this function is correctly defined)
 	routes.AuthRoutes(app)
 	routes.BrandRoutes(app)
 	routes.CategoryRoutes(app)
