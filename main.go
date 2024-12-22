@@ -26,7 +26,13 @@ func main() {
 	}
 
 	// Set up routes (make sure this function is correctly defined)
-	routes.SetupRoutes(app)
+	routes.AuthRoutes(app)
+	routes.BrandRoutes(app)
+	routes.CategoryRoutes(app)
+	routes.CartRoutes(app)
+	routes.InventoryRoutes(app)
+	routes.OrderRoutes(app)
+	routes.ProductRoutes(app)
 
 	// Start server
 	err = app.Listen(":" + port)

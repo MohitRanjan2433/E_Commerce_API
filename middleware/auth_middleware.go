@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
@@ -13,10 +14,10 @@ import (
 	"mohit.com/ecom-api/models"
 )
 
-// Authorize checks user authentication and optionally validates roles
+
 func Authorize(requiredRoles ...string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		// Step 1: Get the Authorization header
+
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -24,7 +25,6 @@ func Authorize(requiredRoles ...string) fiber.Handler {
 			})
 		}
 
-		// Step 2: Extract the token from the "Bearer" format
 		tokenParts := strings.Split(authHeader, "Bearer ")
 		if len(tokenParts) < 2 {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -33,7 +33,6 @@ func Authorize(requiredRoles ...string) fiber.Handler {
 		}
 		tokenString := tokenParts[1]
 
-		// Step 3: Parse and validate the token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -46,7 +45,6 @@ func Authorize(requiredRoles ...string) fiber.Handler {
 			})
 		}
 
-		// Step 4: Extract claims
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -61,7 +59,6 @@ func Authorize(requiredRoles ...string) fiber.Handler {
 			})
 		}
 
-		// Step 5: Check user existence in the database
 		userCollection := db.GetUserCollection()
 		var user models.User
 		filter := bson.M{"email": email}
@@ -72,7 +69,6 @@ func Authorize(requiredRoles ...string) fiber.Handler {
 			})
 		}
 
-		// Step 6: Validate roles if required
 		if len(requiredRoles) > 0 {
 			isAuthorized := false
 			for _, role := range requiredRoles {
@@ -88,11 +84,22 @@ func Authorize(requiredRoles ...string) fiber.Handler {
 			}
 		}
 
-		// Store user information in the context
 		c.Locals("user", user)
-		c.Locals("userID", user.ID) // Make sure userID is set properly
+		c.Locals("userID", user.ID)
 
-		// Proceed to the next handler
 		return c.Next()
 	}
+}
+
+
+
+func GenerateJWT(user models.User) (string, error){
+	claims := jwt.MapClaims{
+		"email": user.Email,
+		"role": user.Role,
+		"exp" : time.Now().Add(time.Hour * 72).Unix(),
+	}
+
+	token :=jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
