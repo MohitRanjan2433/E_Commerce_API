@@ -1,63 +1,122 @@
-# **E-commerce API Project 🚀**
+# E-Commerce API
 
-Welcome to the E-commerce API Project! This repository contains the backend for an e-commerce platform. The API is built using a structured and modular approach, featuring user authentication, product management, category management, and more.
+This project is a backend implementation of an e-commerce application using the Go Fiber framework. It includes various features like user authentication, product and category management, cart operations, order processing, and inventory management. The project is modularized into routes, controllers, models, and middleware for clean architecture and maintainability.
 
-## Features ✨
+## Features
 
-### 1.User Authentication
--- Sign up  
--- Login  
--- Get logged-in user details  
+- **Authentication**: User signup, login, and profile retrieval.
+- **Products**: CRUD operations for products.
+- **Categories**: CRUD operations for categories.
+- **Brands**: Management of product brands.
+- **Cart**: Add, remove, and clear cart items.
+- **Orders**: Place and retrieve orders.
+- **Inventory**: Manage inventory and stock updates.
 
-### 2.Product Management
--- Fetch all products  
--- Create new products (Admin only)  
--- Fetch a product by ID  
--- Delete a product (Admin only)  
+## Routes
 
-### 3.Category Management
--- Fetch all categories   
--- Create new categories  
--- Fetch category by ID  
--- Update categories  
+### Auth Routes
+| Endpoint       | Method | Access  | Description        |
+|----------------|--------|---------|--------------------|
+| `/api/auth/signup` | POST   | Public  | User signup       |
+| `/api/auth/login`  | POST   | Public  | User login        |
+| `/api/auth/me`     | GET    | User    | Get current user  |
 
-### 4.Cart Management
--- Add items to the cart  
--- Update cart items  
--- Remove items from the cart  
+### Brand Routes
+| Endpoint       | Method | Access  | Description                 |
+|----------------|--------|---------|-----------------------------|
+| `/api/brands/:id` | GET   | User    | Get brand by ID            |
+| `/api/brands`     | POST  | Admin   | Create a new brand         |
+| `/api/brands`     | GET   | User    | Get all brands             |
+| `/api/brands/:id` | PUT   | Admin   | Update a brand by ID       |
+| `/api/brands/:id` | DELETE| Admin   | Delete a brand by ID       |
 
-### 5.Order Management:
--- Place orders  
--- Track orders   
--- Manage order statuses   
+### Cart Routes
+| Endpoint               | Method | Access | Description                       |
+|------------------------|--------|--------|-----------------------------------|
+| `/api/cart`            | GET    | User   | Get cart items                   |
+| `/api/cart`            | POST   | User   | Add an item to the cart          |
+| `/api/cart`            | DELETE | User   | Clear the cart                   |
+| `/api/cart/item/:id`   | DELETE | User   | Remove an item from the cart     |
 
-### 6.Inventory Management:
--- Update inventory   
--- Set low-stock alerts   
-### 7.Shipping Management
--- Add, update, and delete shipping addresses    
--- Track shipments   
+### Category Routes
+| Endpoint              | Method | Access  | Description                |
+|-----------------------|--------|---------|----------------------------|
+| `/api/categories`     | GET    | User    | Get all categories         |
+| `/api/categories/:id` | GET    | User    | Get category by ID         |
+| `/api/categories`     | POST   | Admin   | Create a new category      |
+| `/api/categories/:id` | PUT    | Admin   | Update a category by ID    |
+| `/api/categories/:id` | DELETE | Admin   | Delete a category by ID    |
 
-# Tech Stack 🛠️
-Backend Framework: Gin (Go)    
-Authentication: Middleware-based for roles like Admin and Authenticated Users.    
-Database: To be integrated (MongoDB).     
-Middleware:     
-<sup>IsAuthenticated: Ensures the user is logged in.</sup>
-<sup>IsAdmin: Restricts access to admin-only routes.</sup>
+### Inventory Routes
+| Endpoint               | Method | Access  | Description                   |
+|------------------------|--------|---------|-------------------------------|
+| `/api/inventory`       | POST   | Admin   | Add inventory                |
+| `/api/inventory`       | GET    | Admin   | Get all inventory items      |
+| `/api/inventory/updateStock` | POST | Admin | Update stock quantities     |
 
+### Order Routes
+| Endpoint            | Method | Access | Description                   |
+|---------------------|--------|--------|-------------------------------|
+| `/api/orders`       | GET    | User   | Get all orders                |
+| `/api/orders`       | POST   | User   | Create a new order            |
+| `/api/orders/status`| PUT    | Admin  | Update order status           |
 
-# API Endpoints 📃
-## Authentication
+### Product Routes
+| Endpoint              | Method | Access  | Description                |
+|-----------------------|--------|---------|----------------------------|
+| `/api/products`       | GET    | User    | Get all products           |
+| `/api/products/:id`   | GET    | User    | Get product by ID          |
+| `/api/products`       | POST   | Admin   | Create a new product       |
+| `/api/products/:id`   | PUT    | Admin   | Update a product by ID     |
+| `/api/products/:id`   | DELETE | Admin   | Delete a product by ID     |
 
-| Method | EndPoint | Description |
------------------------------------
-| POST | /api/auth/signup | Register a new User
+## Setup
 
+### Prerequisites
+- Go 1.20 or later
+- MongoDB
 
-# Future API Endpoints (Planned)    
+### Installation
 
-## Cart: /api/cart/
-## Orders: /api/orders/
-## Inventory: /api/inventory/
-## Shipping: /api/shipping/
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/<your-username>/ecom-api.git
+   cd ecom-api
+   ```
+
+2. Install dependencies:
+   ```bash
+   go mod tidy
+   ```
+
+3. Set up environment variables:
+   Create a `.env` file and add your configuration:
+   ```env
+   MONGO_URI=your_mongo_uri
+   JWT_SECRET=your_jwt_secret
+   ```
+
+4. Run the application:
+   ```bash
+   go run main.go
+   ```
+
+### Testing
+
+Use a tool like Postman or curl to test the API endpoints.
+
+## Folder Structure
+
+```
+.
+├── controllers  # Business logic for each route
+├── middleware   # Authorization and authentication
+├── models       # Database models
+├── routes       # Route handlers
+├── main.go      # Entry point of the application
+```
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
