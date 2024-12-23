@@ -75,6 +75,7 @@ This project is a backend implementation of an e-commerce application using the 
 ### Prerequisites
 - Go 1.20 or later
 - MongoDB
+- [Air](https://github.com/cosmtrek/air): Live reload for Go applications
 
 ### Installation
 
@@ -96,7 +97,12 @@ This project is a backend implementation of an e-commerce application using the 
    JWT_SECRET=your_jwt_secret
    ```
 
-4. Run the application:
+4. Run the application with Air for live reloading:
+   ```bash
+   air
+   ```
+
+5. Alternatively, run the application manually:
    ```bash
    go run main.go
    ```
