@@ -3,7 +3,7 @@ package product
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 func CreateProduct(c *fiber.Ctx) error {
@@ -32,7 +32,7 @@ func CreateProduct(c *fiber.Ctx) error {
 	}
 
 	// Check if product already exists by name and brand
-	exists, err := models.CheckIfProductExists(request.Name, request.BrandID)
+	exists, err := service.CheckIfProductExists(request.Name, request.BrandID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to check if the product exists",
@@ -46,7 +46,7 @@ func CreateProduct(c *fiber.Ctx) error {
 	}
 
 	// Call the model function to create the product
-	err = models.CreateProduct(request.Name, request.Description, request.Price, request.Rating, request.CategoryID, request.BrandID, request.Stock)
+	err = service.CreateProduct(request.Name, request.Description, request.Price, request.Rating, request.CategoryID, request.BrandID, request.Stock)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Could not create the product",

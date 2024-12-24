@@ -3,7 +3,7 @@ package brand
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 func UpdateBrandController(c *fiber.Ctx) error {
@@ -27,7 +27,7 @@ func UpdateBrandController(c *fiber.Ctx) error {
 		})
 	}
 
-	err = models.UpdateBrand(brandID, request.Name, request.Country)
+	err = service.UpdateBrand(brandID, request.Name, request.Country)
 	if err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error":"Error updating brand",

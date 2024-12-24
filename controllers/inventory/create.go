@@ -1,11 +1,9 @@
 package inventory
 
 import (
-
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
-	parseHelper"mohit.com/ecom-api/helper"
-	
+	parseHelper "mohit.com/ecom-api/helper"
+	"mohit.com/ecom-api/service"
 )
 
 func CreateInventoryController(c *fiber.Ctx) error {
@@ -31,7 +29,7 @@ func CreateInventoryController(c *fiber.Ctx) error {
 	}
 
 	// Create inventory
-	err = models.CreateInventory(productID, request.Warehouse, request.Stock)
+	err = service.CreateInventory(productID, request.Warehouse, request.Stock)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error creating inventory: " + err.Error(),

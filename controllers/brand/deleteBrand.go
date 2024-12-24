@@ -3,7 +3,7 @@ package brand
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -18,7 +18,7 @@ func DeleteBrandController(c *fiber.Ctx) error {
 		})
 	}
 
-	err = models.DeleteBrand(brand)
+	err = service.DeleteBrand(brand)
 	if err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error deleting brand",

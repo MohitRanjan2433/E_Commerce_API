@@ -1,9 +1,8 @@
 package cart
 
 import (
-
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 func GetCart(c *fiber.Ctx) error {
@@ -14,7 +13,7 @@ func GetCart(c *fiber.Ctx) error {
 		})
 	}
 
-	cart, err := models.GetCart(userID)
+	cart, err := service.GetCart(userID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not retrieve cart", "details": err.Error()})
 	}

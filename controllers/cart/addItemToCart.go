@@ -1,9 +1,8 @@
 package cart
 
 import (
-
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 func AddItemToCart(c *fiber.Ctx) error {
@@ -28,7 +27,7 @@ func AddItemToCart(c *fiber.Ctx) error {
 	}
 
 	// Add the item to the cart
-	err := models.AddItemToCart(userID, request.ProductID, request.ProductName, request.Quantity, request.Price)
+	err := service.AddItemToCart(userID, request.ProductID, request.ProductName, request.Quantity, request.Price)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not add item to cart", "details": err.Error()})
 	}

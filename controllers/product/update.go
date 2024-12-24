@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 func UpdateProductByID(c *fiber.Ctx) error {
@@ -22,7 +23,7 @@ func UpdateProductByID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Could not parse the request body"})
 	}
 
-	err = models.UpdateProductByID(objectID, updatedProduct)
+	err = service.UpdateProductByID(objectID, updatedProduct)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}

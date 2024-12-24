@@ -2,7 +2,7 @@ package category
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models" 
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -10,7 +10,7 @@ func GetCategoryByID(c *fiber.Ctx) error {
 
     categoryID := c.Params("id")
 
-    category, err := models.GetCategoryByID(categoryID)
+    category, err := service.GetCategoryByID(categoryID)
 
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"mohit.com/ecom-api/db"
-	"mohit.com/ecom-api/middleware"
+	"mohit.com/ecom-api/helper"
 	"mohit.com/ecom-api/models"
 )
 
@@ -43,7 +43,7 @@ func Login(c *fiber.Ctx) error{
 		})
 	}
 
-	token, err := middleware.GenerateJWT(user)
+	token, err := helper.GenerateJWT(user)
 	if err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error generating token",

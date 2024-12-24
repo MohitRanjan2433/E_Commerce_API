@@ -2,12 +2,12 @@ package brand
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 
 func GetAllBrandController(c *fiber.Ctx) error {
-	brands, err := models.GetAllBrand()
+	brands, err := service.GetAllBrand()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error fetching brands",

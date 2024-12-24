@@ -1,10 +1,9 @@
 package inventory
 
 import (
-
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
-	parseHelper"mohit.com/ecom-api/helper"
+	parseHelper "mohit.com/ecom-api/helper"
+	"mohit.com/ecom-api/service"
 )
 
 func UpdateStockController(c *fiber.Ctx) error {
@@ -36,7 +35,7 @@ func UpdateStockController(c *fiber.Ctx) error {
 	}
 
 	// Update stock
-	err = models.UpdateStock(productID, request.Stock)
+	err = service.UpdateStock(productID, request.Stock)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to update stock: " + err.Error(),

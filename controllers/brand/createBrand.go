@@ -2,7 +2,7 @@ package brand
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -25,7 +25,7 @@ func CreateBrandController (c *fiber.Ctx) error {
         })
     }
 
-	exists, err := models.CheckIfBrandExists(request.Name)
+	exists, err := service.CheckIfBrandExists(request.Name)
 	if err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error checking brand existence",
@@ -38,7 +38,7 @@ func CreateBrandController (c *fiber.Ctx) error {
 		})
 	}
 
-	BrandID, err := models.CreateBrand(request.Name, request.Country)
+	BrandID, err := service.CreateBrand(request.Name, request.Country)
 	if err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error creating brand",

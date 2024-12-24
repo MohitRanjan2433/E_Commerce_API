@@ -3,7 +3,7 @@ package category
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
-	"mohit.com/ecom-api/models" 
+	"mohit.com/ecom-api/service"
 )
 
 func DeleteCategoryByID(c *fiber.Ctx) error {
@@ -12,7 +12,7 @@ func DeleteCategoryByID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Category ID is required"})
 	}
 
-	err := models.DeleteCategoryByID(id)
+	err := service.DeleteCategoryByID(id)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Category not found"})

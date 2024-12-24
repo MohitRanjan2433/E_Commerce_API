@@ -1,9 +1,8 @@
 package cart
 
 import (
-
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -18,7 +17,7 @@ func ClearCart(c *fiber.Ctx) error {
 	}
 
 	// Clear the cart
-	err := models.ClearCart(userID)
+	err := service.ClearCart(userID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not clear cart", "details": err.Error()})
 	}

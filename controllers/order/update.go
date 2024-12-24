@@ -3,7 +3,7 @@ package order
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -25,7 +25,7 @@ func UpdateOrderStatusController(c *fiber.Ctx) error {
 		})
 	}
 
-	err := models.UpdateOrderStatus(request.Status, request.OrderID)
+	err := service.UpdateOrderStatus(request.Status, request.OrderID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to update order status: " + err.Error(),

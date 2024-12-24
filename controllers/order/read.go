@@ -2,7 +2,7 @@ package order
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -15,7 +15,7 @@ func GetAllOrdersController(c *fiber.Ctx) error {
 		})
 	}
 
-	orders, err := models.GetAllOrdersById(userID)
+	orders, err := service.GetAllOrdersById(userID)
 	if err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to retrieve orders: " + err.Error(),

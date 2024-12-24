@@ -2,7 +2,7 @@ package category
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models" 
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -25,7 +25,7 @@ func CreateCategory(c *fiber.Ctx) error {
     }
 
     // Check if category already exists
-    exists, err := models.CheckIfCategoryExists(request.Name)
+    exists, err := service.CheckIfCategoryExists(request.Name)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
             "error": "Failed to check if category exists",
@@ -39,7 +39,7 @@ func CreateCategory(c *fiber.Ctx) error {
     }
 
     // Create the category
-    categoryID, err := models.CreateCategory(request.Name)
+    categoryID, err := service.CreateCategory(request.Name)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
             "error": "Failed to create category",

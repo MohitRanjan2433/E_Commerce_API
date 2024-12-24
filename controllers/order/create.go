@@ -3,6 +3,7 @@ package order
 import (
 	"github.com/gofiber/fiber/v2"
 	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -60,7 +61,7 @@ func CreateOrderHandler(c *fiber.Ctx) error {
 	}
 
 	// Call the CreateOrder function from the models package
-	order, err := models.CreateOrder(userID, orderItems, totalPrice, req.ShippingInfo)
+	order, err := service.CreateOrder(userID, orderItems, totalPrice, req.ShippingInfo)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to create order: " + err.Error(),

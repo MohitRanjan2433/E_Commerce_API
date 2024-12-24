@@ -1,14 +1,13 @@
 package inventory
 
 import (
-
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 func GetAllInventoryController(c *fiber.Ctx) error {
 	// Fetch inventory records
-	inventories, err := models.GetAllInventory()
+	inventories, err := service.GetAllInventory()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to retrieve inventory: " + err.Error(),

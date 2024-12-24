@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 func RemoveItemFromCart(c *fiber.Ctx) error {
@@ -23,7 +23,7 @@ func RemoveItemFromCart(c *fiber.Ctx) error {
 	fmt.Println("Removing item with product_id:", productID, "for user:", userID)
 
 	// Remove the item from the cart
-	err := models.RemoveItemFromCart(userID, productID)
+	err := service.RemoveItemFromCart(userID, productID)
 	if err != nil {
 		// Log error details for debugging
 		fmt.Println("Error removing item from cart:", err)

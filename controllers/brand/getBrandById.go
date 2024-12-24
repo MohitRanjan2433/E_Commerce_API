@@ -3,7 +3,7 @@ package brand
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"mohit.com/ecom-api/models"
+	"mohit.com/ecom-api/service"
 )
 
 
@@ -16,7 +16,7 @@ func GetBrandController(c *fiber.Ctx)error {
 		})
 	}
 
-	brand, err := models.GetBrandByID(brandID)
+	brand, err := service.GetBrandByID(brandID)
 	if err != nil{
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error":"Error retriving brand",
