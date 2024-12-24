@@ -2,14 +2,14 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/controllers"
-	"mohit.com/ecom-api/middleware"
+	authController "mohit.com/ecom-api/controllers/auth"
+	"mohit.com/ecom-api/helper"
 )
 
 func AuthRoutes(app *fiber.App) {
 	// Auth Routes
 	auth := app.Group("/api/auth")
-	auth.Post("/signup", Controllers.Signup)
-	auth.Post("/login", Controllers.Login)
-	auth.Get("/me", middleware.Authorize("user"),  Controllers.Me)
+	auth.Post("/signup", authController.Signup)
+	auth.Post("/login", authController.Login)
+	auth.Get("/me", helper.Authorize("user"), authController.Me)
 }

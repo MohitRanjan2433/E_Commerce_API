@@ -2,17 +2,17 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"mohit.com/ecom-api/controllers"
-	"mohit.com/ecom-api/middleware"
+	brandConroller "mohit.com/ecom-api/controllers/brand"
+	"mohit.com/ecom-api/helper"
 )
 
 func BrandRoutes(app *fiber.App) {
 
 	//Brand Routes
 	brands := app.Group("/api/brands")
-	brands.Get("/:id", middleware.Authorize("user"), Controllers.GetBrandController)
-	brands.Post("/", middleware.Authorize("admin"), Controllers.CreateBrandController)
-	brands.Get("/",middleware.Authorize("user"), Controllers.GetAllBrandController)
-	brands.Put("/:id", middleware.Authorize("admin"), Controllers.UpdateBrandController)
-	brands.Delete("/:id", middleware.Authorize("admin"), Controllers.DeleteBrandController)
+	brands.Get("/:id", helper.Authorize("user"), brandConroller.GetBrandController)
+	brands.Post("/", helper.Authorize("admin"), brandConroller.CreateBrandController)
+	brands.Get("/",helper.Authorize("user"), brandConroller.GetAllBrandController)
+	brands.Put("/:id", helper.Authorize("admin"), brandConroller.UpdateBrandController)
+	brands.Delete("/:id", helper.Authorize("admin"), brandConroller.DeleteBrandController)
 }
