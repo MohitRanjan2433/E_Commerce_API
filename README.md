@@ -115,10 +115,11 @@ Use a tool like Postman or curl to test the API endpoints.
 
 ```
 .
-├── controllers  # Business logic for each route
+├── controllers  # all the crud operation
 ├── middleware   # Authorization and authentication
 ├── models       # Database models
 ├── routes       # Route handlers
+├── service.go   # Business Logic
 ├── main.go      # Entry point of the application
 ```
 
