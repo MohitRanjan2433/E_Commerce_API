@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"mohit.com/ecom-api/routes" 
+	"mohit.com/ecom-api/middleware"
+	"mohit.com/ecom-api/routes"
 )
 
 func main() {
@@ -21,6 +23,8 @@ func main() {
 	if port == "" {
 		port = "3000" 
 	}
+
+	app.Use(middleware.RateLimiterMiddleware(20, 30*time.Second))
 
 	routes.AuthRoutes(app)
 	routes.BrandRoutes(app)
